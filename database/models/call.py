@@ -17,9 +17,8 @@ class Call(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=generate_uuid)
     caller_id: Mapped[str] = mapped_column(String, ForeignKey("users.id"), nullable=False)
-    session_id: Mapped[str] = mapped_column(String, ForeignKey("sessions.id"), nullable=False)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     caller: Mapped["User"] = relationship("User", back_populates="calls")
-    session: Mapped["Session"] = relationship("Session", back_populates="calls")
+    sessions: Mapped[list["Session"]] = relationship("Session", back_populates="call", cascade="all, delete-orphan")
