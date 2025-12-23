@@ -3,6 +3,9 @@ from database.repositories.call_repo import CallRepository
 from database.repositories.session_repo import SessionRepository
 from database.models.call import Call as CallModel
 from backend.error import NotFoundError, ConflictError
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CallService:
     def __init__(self, db: Session):
@@ -26,9 +29,11 @@ class CallService:
         try :
             call = self.call_repo.get_by_id(call_id)
             if not call:
+                logger.warning("Call not found", extra={"call_id": call_id})
                 raise NotFoundError("Call not found.")
             
             if call.ended_at is not None:
+                logger.warning("Call has already ended", extra={"call_id": call_id})
                 raise ConflictError("Call has already ended.")
             
             self.call_repo.end_call(call)

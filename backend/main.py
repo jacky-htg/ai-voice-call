@@ -3,8 +3,15 @@ from fastapi.responses import JSONResponse
 from fastapi.requests import Request
 from backend.error import NotFoundError, ConflictError, ValidationError
 from backend.api import calls
+from backend.logging import setup_logging
+from backend.middlewares.logging import logging_middleware
+import logging
+
+
+setup_logging()
 
 app = FastAPI()
+app.middleware("http")(logging_middleware)
 
 app.include_router(calls.router)
 
@@ -39,7 +46,8 @@ def validation_handler(request: Request, exc: ValidationError):
 
 @app.exception_handler(Exception)
 def internal_error_handler(request: Request, exc: Exception):
-    # log exc here
+    logger = logging.getLogger(__name__)
+    logger.error("Unhandled exception occurred", exc_info=exc)
     return JSONResponse(
         status_code=500,
         content={"error": "Internal server error"}

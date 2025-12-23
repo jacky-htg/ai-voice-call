@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class StartCallRequest(BaseModel):
-    caller_id: str
+    caller_id: str = Field (..., min_length=1, description="caller_id can not be empty")
 
 class CallResponse(BaseModel):
     call_id: str
