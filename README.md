@@ -6,9 +6,9 @@ Service ini bertanggung jawab untuk **manajemen call dan session** menggunakan R
 
 ## 📐 High-Level Architecture
 
-→ FastAPI Backend
-→ PostgreSQL
-→ LiveKit Server
+- FastAPI Backend
+- PostgreSQL
+- LiveKit Server
 
 ---
 
