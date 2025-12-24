@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from database.repositories.call_repo import CallRepository
 from database.repositories.session_repo import SessionRepository
 from database.models.call import Call as CallModel
+from database.models.session import Session as SessionModel
 from backend.error import NotFoundError, ConflictError
 import logging
 
@@ -16,7 +17,8 @@ class CallService:
     def start_call(self, caller_id: str) -> CallModel:
         try :    
             call = self.call_repo.create(caller_id)
-            session = self.session_repo.create(call.id)
+            session = SessionModel(call=call)
+            self.db.add(session)
             self.db.commit()
             self.db.refresh(call)
             self.db.refresh(session)
