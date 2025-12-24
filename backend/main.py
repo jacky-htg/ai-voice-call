@@ -5,6 +5,7 @@ from backend.error import NotFoundError, ConflictError, ValidationError
 from backend.api import calls
 from backend.logging import setup_logging
 from backend.middlewares.logging import logging_middleware
+from backend.middlewares.auth import AuthMiddleware, LiveKitWebhookAuthMiddleware
 from loguru import logger
 from dotenv import load_dotenv
 
@@ -13,6 +14,8 @@ setup_logging()
 
 app = FastAPI()
 app.middleware("http")(logging_middleware)
+app.add_middleware(AuthMiddleware)
+app.add_middleware(LiveKitWebhookAuthMiddleware)
 
 app.include_router(calls.router)
 

@@ -61,7 +61,7 @@ class CallService:
             "livekit_token": token,
         }
      
-    def end_call(self, call_id: str, from_webhook: bool = False) :
+    def end_call(self, call_id: str, from_webhook: bool = False) -> tuple[CallModel | None, list[SessionModel]]:
         call = self.call_repo.get_by_id(call_id)
         if not call:
             return None, []

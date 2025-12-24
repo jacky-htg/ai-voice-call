@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from backend.services.call_service import CallService
 from backend.schemas.call import StartCallRequest, CallResponse
@@ -10,8 +10,12 @@ router = APIRouter(
 )
 
 @router.post("/", response_model=CallResponse)
-def start_call(payload: StartCallRequest, db: Session = Depends(get_db)):
+def start_call(payload: StartCallRequest, request: Request, db: Session = Depends(get_db)):
+   user_id = request.state.user_id
    service = CallService(db)
+   if user_id != payload.caller_id:
+       raise Exception("Caller ID does not match authenticated user ID")
+   
    result = service.start_call(payload.caller_id)
    call = result["call"]
    session = result["session"]
@@ -25,8 +29,9 @@ def start_call(payload: StartCallRequest, db: Session = Depends(get_db)):
        room_name=result["room_name"]
    )
 
-@router.post("/{call_id}/join/{user_id}", response_model=CallResponse)
-def start_call(call_id: str, user_id: str, db: Session = Depends(get_db)):
+@router.post("/{call_id}/join", response_model=CallResponse)
+def start_call(call_id: str, request: Request, db: Session = Depends(get_db)):
+   user_id = request.state.user_id
    service = CallService(db)
    result = service.join_call(call_id=call_id, user_id=user_id)
    call = result["call"]
