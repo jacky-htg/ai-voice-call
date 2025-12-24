@@ -17,6 +17,7 @@ class Call(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=generate_uuid)
     caller_id: Mapped[str] = mapped_column(String, ForeignKey("users.id"), nullable=False)
+    status: Mapped[str] = mapped_column(String, default="initiated", nullable=False)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

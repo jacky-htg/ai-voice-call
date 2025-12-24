@@ -6,8 +6,9 @@ from backend.api import calls
 from backend.logging import setup_logging
 from backend.middlewares.logging import logging_middleware
 from loguru import logger
+from dotenv import load_dotenv
 
-
+load_dotenv()
 setup_logging()
 
 app = FastAPI()

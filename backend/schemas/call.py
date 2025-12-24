@@ -9,3 +9,5 @@ class CallResponse(BaseModel):
     session_id: str 
     started_at: str 
     ended_at: str | None = None
+    livekit_token: str 
+    room_name: str

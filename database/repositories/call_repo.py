@@ -5,10 +5,12 @@ from .base import BaseRepository
 class CallRepository(BaseRepository):
     def create(self, caller_id: str) -> CallModel:
         new_call = CallModel(caller_id=caller_id)
+        new_call.status = "initiated"
         self.db.add(new_call)
         return new_call
 
     def end_call(self, call: CallModel) -> CallModel:
+        call.status = "ended"
         call.ended_at = func.now()
         return call
     

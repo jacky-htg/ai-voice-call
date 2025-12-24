@@ -12,26 +12,46 @@ router = APIRouter(
 @router.post("/", response_model=CallResponse)
 def start_call(payload: StartCallRequest, db: Session = Depends(get_db)):
    service = CallService(db)
-   call = service.start_call(payload.caller_id)
-   active_session = next((s for s in call.sessions if s.ended_at is None), None)
+   result = service.start_call(payload.caller_id)
+   call = result["call"]
+   session = result["session"]
    return CallResponse(
        call_id=call.id,
        caller_id=call.caller_id,
-       session_id=active_session.id if active_session else None,
+       session_id=session.id,
        started_at=call.started_at.isoformat(), 
-       ended_at=call.ended_at.isoformat() if call.ended_at else None
+       ended_at=call.ended_at.isoformat() if call.ended_at else None,
+       livekit_token=result["livekit_token"],
+       room_name=result["room_name"]
    )
-   
+
+@router.post("/{call_id}/join/{user_id}", response_model=CallResponse)
+def start_call(call_id: str, user_id: str, db: Session = Depends(get_db)):
+   service = CallService(db)
+   result = service.join_call(call_id=call_id, user_id=user_id)
+   call = result["call"]
+   session = result["session"]
+   return CallResponse(
+       call_id=call.id,
+       caller_id=call.caller_id,
+       session_id=session.id,
+       started_at=call.started_at.isoformat(), 
+       ended_at=call.ended_at.isoformat() if call.ended_at else None,
+       livekit_token=result["livekit_token"],
+       room_name=result["room_name"]
+   )
+
 @router.post("/{call_id}/end", response_model=CallResponse)
 def end_call(call_id: str, db: Session = Depends(get_db)):
     service = CallService(db)
-    call = service.end_call(call_id)
-    last_session = (call.sessions[-1] if call.sessions else None)
-
+    call, sessions = service.end_call(call_id)
+    
     return CallResponse(
         call_id=call.id,
         caller_id=call.caller_id,
-        session_id=last_session.id if last_session else None,
+        session_id=sessions[0].id if sessions else "",
         started_at=call.started_at.isoformat(), 
-        ended_at=call.ended_at.isoformat() if call.ended_at else None
+        ended_at=call.ended_at.isoformat() if call.ended_at else None,
+        livekit_token="",
+        room_name=f"call_{call.id}"
     )
