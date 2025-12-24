@@ -4,9 +4,7 @@ from database.repositories.session_repo import SessionRepository
 from database.models.call import Call as CallModel
 from database.models.session import Session as SessionModel
 from backend.error import NotFoundError, ConflictError
-import logging
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 class CallService:
     def __init__(self, db: Session):

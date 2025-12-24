@@ -1,8 +1,6 @@
 import time
-import logging
+from loguru import logger
 from fastapi import Request
-
-logger = logging.getLogger(__name__)
 
 async def logging_middleware(request: Request, call_next):
     start_time = time.time()

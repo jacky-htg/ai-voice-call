@@ -1,16 +1,18 @@
-import logging
+from loguru import logger
 import sys
 
-LOG_FORMAT = (
-    "%(asctime)s | %(levelname)s | "
-    "%(name)s | %(message)s"
-)
-
 def setup_logging():
-    logging.basicConfig(
-        level=logging.INFO,
-        format=LOG_FORMAT,
-        handlers=[
-            logging.StreamHandler(sys.stdout)
-        ]
+    logger.remove()
+
+    logger.add(
+        sys.stdout, 
+        level="INFO", 
+        format=(
+            "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+            "<level>{level}</level> | "
+            "<cyan>{file}:{line}</cyan> | "
+            "<magenta>{function}</magenta> | "
+            "{message} | "
+            "<yellow>{extra}</yellow>"
+        ),
     )

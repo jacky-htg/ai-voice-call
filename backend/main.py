@@ -5,7 +5,7 @@ from backend.error import NotFoundError, ConflictError, ValidationError
 from backend.api import calls
 from backend.logging import setup_logging
 from backend.middlewares.logging import logging_middleware
-import logging
+from loguru import logger
 
 
 setup_logging()
@@ -46,7 +46,6 @@ def validation_handler(request: Request, exc: ValidationError):
 
 @app.exception_handler(Exception)
 def internal_error_handler(request: Request, exc: Exception):
-    logger = logging.getLogger(__name__)
     logger.error("Unhandled exception occurred", exc_info=exc)
     return JSONResponse(
         status_code=500,
